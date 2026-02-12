@@ -3,7 +3,8 @@ Asynchronous FIFO Buffer Implementation
 
 ​This repository contains a Verilog implementation of an Asynchronous FIFO (First-In, First-Out) buffer. This design is specifically engineered to handle data transfer between modules operating in different, non-synchronized clock domains, ensuring data integrity and mitigating metastability.
 
-​Overview
+​Overview 
+
 ​In digital system design, transferring data between independent clock domains is a common challenge. A standard synchronous FIFO would fail here due to setup and hold time violations. This project implements an Async FIFO using dual-port RAM for the memory backbone, Gray Code counters for pointer management to ensure only one bit changes per transition, and multi-stage synchronizers (2-FF) to safely pass pointers across the clock boundary.
 ​Key Use Cases
 
