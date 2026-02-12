@@ -20,19 +20,24 @@ Asynchronous FIFO Buffer Implementation
 ​Full Condition: The FIFO is full when the pointers are equal but the MSBs are different. This indicates the write pointer has wrapped around exactly once more than the read pointer.
 
 ​Gray Coding
+
 ​To prevent glitches during cross-domain synchronization, binary pointers are converted to Gray Code. This ensures that even if a clock edge captures a pointer mid-transition, the value will at most be off by one bit, preventing catastrophic logic failures and providing reliable synchronization.
 ​Hardware Modules
 
 ​The design is modularized into five core files for better synthesis and static timing analysis:
 
 ​1. fifo.v
-The top-level wrapper that instantiates the entire system. In a larger ASIC design, this wrapper helps group modules by clock domain.
+The top-level wrapper that instantiates the entire system. In a larger ASIC design, this wrapper helps group modules by clock domain. 
+
 ​2. fifo_memory.v
 A dual-port RAM buffer with independent read and write ports. The write data is stored on the rising edge of the write clock if the memory is not full.
+
 ​3. read_ptr.v
 Handles the read-domain logic. It is completely synchronized by the read clock and contains the logic for Gray code pointer conversion and empty flag generation.
+
 ​4. write_ptr.v
 Handles the write-domain logic. It is synchronized by the write clock and manages the write pointer and the full flag generation.
+
 ​5. two_ff_syn.v
 A 2-Flip-Flop synchronizer used to pass pointers between domains. This module mitigates metastability by allowing the signal to settle before it is sampled by the destination clock.
 
@@ -40,19 +45,28 @@ A 2-Flip-Flop synchronizer used to pass pointers between domains. This module mi
 ​Signal Definitions:
 
 ​wclk / rclk: Write and read clock signals.
+
 ​wdata / rdata: Input and output data buses.
+
 ​wclk_en / rinc: Enable signals to trigger write or read increments.
+
 ​wfull / rempty: Status flags that prevent memory overflow or under-reads.
+
 ​wptr / rptr: The Gray code pointers for each domain.
+
 ​w_rptr / r_wptr: The cross-synchronized pointers used for comparison.
 
 
 
-​Verification and Testing:
 
+
+​Verification and Testing:
 ​The testbench (fifo_tb.v) validates the design through three critical stress tests:
+
 ​Linear Flow: Basic write operations followed by reads to verify data parity.
+
 ​Overflow Protection: Attempting to write to a full FIFO to ensure the wfull flag correctly blocks the operation.
+
 ​Underflow Protection: Attempting to read from an empty FIFO to ensure the rempty flag prevents invalid data output.
 
 
